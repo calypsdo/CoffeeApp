@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CoffeeApp.Presentation.Views.CoffeePage"
+             xmlns:model="clr-namespace:CoffeeApp.Domain.Entities"
+             xmlns:viewmodel="clr-namespace:CoffeeApp.Presentation.ViewModels"
+             xmlns:res="clr-namespace:CoffeeApp.Resources.Languages"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             ios:Page.UseSafeArea="True"
+             Title="{x:Static res:AppResources.CoffeePageTitle}"
+             x:DataType="viewmodel:CoffeePageViewModel">
+
+    <Grid
+        ColumnDefinitions="*,*"
+        ColumnSpacing="5"
+        RowSpacing="0"
+        BackgroundColor="Transparent"
+        RowDefinitions="*, Auto">
+        <RefreshView
+            Grid.ColumnSpan="2"
+            Command="{Binding GetCoffeeCommand}"
+            IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView
+                ItemsSource="{Binding CoffeeItems}"
+                SelectionMode="None">
+            <CollectionView.EmptyView>
+                    <StackLayout Padding="100">
+                        <Image
+                            HorizontalOptions="Center"
+                            HeightRequest="160"
+                            WidthRequest="160"
+                            Source="nodata.png"
+                            VerticalOptions="Center" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Coffee">
+                        <Grid 
+                            Padding="10" 
+                            HorizontalOptions="Fill">
+                            <Border
+                                HeightRequest="125"
+                                Style="{StaticResource CardView}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:CoffeePageViewModel}}, x:DataType=viewmodel:CoffeePageViewModel, Path=GoToCoffeeDetailsCommand}"
+                                        CommandParameter="{Binding .}">
+                                    </TapGestureRecognizer>
+                                </Border.GestureRecognizers>
+                                <Grid Padding="0" ColumnDefinitions="125,*">
+                                    <Image
+                                                Aspect="AspectFill"
+                                                HeightRequest="125"
+                                                Source="{Binding Image}"
+                                                WidthRequest="125" />
+                                    <VerticalStackLayout
+                                                VerticalOptions="Center"
+                                                Grid.Column="1"
+                                                Padding="10">
+                                        <Label Style="{StaticResource LargeLabel}" Text="{Binding Title}" />
+                                        <Label Style="{StaticResource MediumLabel}" Text="{Binding Description}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <Button
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Margin="8"
+            HorizontalOptions="Center"
+            Command="{Binding GetCoffeeCommand}"
+            IsEnabled="{Binding IsNotBusy}"
+            Style="{StaticResource ButtonOutline}"
+            Text="{x:Static res:AppResources.GetCoffees}" />
+
+        <ActivityIndicator
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2"
+            HorizontalOptions="Fill"
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}"
+            Color="{StaticResource Primary}"
+            VerticalOptions="Center" />
+    </Grid>
+
+</ContentPage>
